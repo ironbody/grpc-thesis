@@ -3,11 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"net/http"
-	"time"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -15,6 +13,15 @@ func hello(w http.ResponseWriter, req *http.Request) {
 }
 
 var num = 32
+
+var expectedUser = map[string]interface{}{
+	"id":   float64(1969),
+	"name": "Margaret Hamilton",
+}
+
+var expectedNumber = map[string]int{
+	"number": 64,
+}
 
 func getNumber(w http.ResponseWriter, req *http.Request) {
 	res := map[string]int{
@@ -25,36 +32,52 @@ func getNumber(w http.ResponseWriter, req *http.Request) {
 }
 
 func checkNumber(w http.ResponseWriter, req *http.Request) {
-	println("check number called")
-	fmt.Fprintf(w, "calling /getModifiedNumber in 3 seconds")
+	data := map[string]interface{}{}
 
-	go callClientNumber(req)
+	decoder := json.NewDecoder(req.Body)
+	decoder.Decode(&data)
+
+	log.Println(data)
+	log.Println(expectedNumber)
+
+	if fmt.Sprint(data) == fmt.Sprint(expectedNumber) {
+		fmt.Fprintf(w, "Correct!")
+	} else {
+		fmt.Fprintf(w, "Incorrect! (The data is case sensitive)")
+	}
 }
 
-func callClientNumber(req *http.Request) {
-	time.Sleep(3 * time.Second)
-
+func checkUser(w http.ResponseWriter, req *http.Request) {
 	host, _, _ := net.SplitHostPort(req.RemoteAddr)
-	addr := fmt.Sprintf("http://%s:9999/getModifiedNumber", host)
+	addr := fmt.Sprintf("http://%s:9009/retrieveUser", host)
 
-	fmt.Printf("%s\n", addr)
 	resp, err := http.Get(addr)
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Fprintf(w, "Server error trying to contact %s", addr)
+		log.Printf("Server error trying to contact %s", addr)
+		return
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	data := map[string]interface{}{}
 
-	println(string(body))
+	decoder := json.NewDecoder(resp.Body)
+	decoder.Decode(&data)
+
+	log.Println(data)
+	log.Println(expectedUser)
+
+	if fmt.Sprint(data) == fmt.Sprint(expectedUser) {
+		fmt.Fprintf(w, "Correct!")
+	} else {
+		fmt.Fprintf(w, "Incorrect! (The answer is case sensitive)")
+	}
 }
 
 func main() {
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/getNumber", getNumber)
 	http.HandleFunc("/checkNumber", checkNumber)
+	http.HandleFunc("/checkUser", checkUser)
 
 	http.ListenAndServe(":8080", nil)
 }
