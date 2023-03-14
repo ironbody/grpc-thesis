@@ -78,6 +78,5 @@ func main() {
 	http.HandleFunc("/getNumber", getNumber)
 	http.HandleFunc("/checkNumber", checkNumber)
 	http.HandleFunc("/checkUser", checkUser)
-
 	http.ListenAndServe(":8080", nil)
 }
