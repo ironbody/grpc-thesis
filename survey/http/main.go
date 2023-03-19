@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 )
 
@@ -14,14 +13,18 @@ func hello(w http.ResponseWriter, req *http.Request) {
 
 var num = 32
 
-var expectedUser = map[string]interface{}{
-	"id":   float64(1969),
-	"name": "Margaret Hamilton",
+type NumberResponse struct {
+	Number int
 }
 
-var expectedNumber = map[string]int{
-	"number": 64,
+type UserResponse struct {
+	Id   int
+	Name string
 }
+
+var expectedUser = UserResponse{Id: 1969, Name: "Margaret Hamilton"}
+
+var expectedNumber = NumberResponse{Number: num * 2}
 
 func getNumber(w http.ResponseWriter, req *http.Request) {
 	res := map[string]int{
@@ -32,45 +35,43 @@ func getNumber(w http.ResponseWriter, req *http.Request) {
 }
 
 func checkNumber(w http.ResponseWriter, req *http.Request) {
-	data := map[string]interface{}{}
+	num := NumberResponse{}
 
 	decoder := json.NewDecoder(req.Body)
-	decoder.Decode(&data)
+	decoder.Decode(&num)
 
-	log.Println(data)
+	log.Println(num.Number)
 	log.Println(expectedNumber)
 
-	if fmt.Sprint(data) == fmt.Sprint(expectedNumber) {
+	if num.Number == expectedNumber.Number {
 		fmt.Fprintf(w, "Correct!")
 	} else {
+		log.Printf("%d != %d\n", num.Number, expectedNumber.Number)
 		fmt.Fprintf(w, "Incorrect! (The data is case sensitive)")
 	}
 }
 
 func checkUser(w http.ResponseWriter, req *http.Request) {
-	host, _, _ := net.SplitHostPort(req.RemoteAddr)
-	addr := fmt.Sprintf("http://%s:9009/retrieveUser", host)
 
-	resp, err := http.Get(addr)
+	resp, err := http.Get("http://localhost:9009/retrieveUser")
 	if err != nil {
-		fmt.Fprintf(w, "Server error trying to contact %s", addr)
-		log.Printf("Server error trying to contact %s", addr)
+		fmt.Fprintf(w, "server error trying to contact server")
+		log.Printf("server error trying to contact server")
 		return
 	}
 
-	data := map[string]interface{}{}
-
+	var data UserResponse
 	decoder := json.NewDecoder(resp.Body)
 	decoder.Decode(&data)
 
 	log.Println(data)
 	log.Println(expectedUser)
 
-	if fmt.Sprint(data) == fmt.Sprint(expectedUser) {
+	if data == expectedUser {
 		fmt.Fprintf(w, "Correct!")
-	} else {
-		fmt.Fprintf(w, "Incorrect! (The answer is case sensitive)")
 	}
+
+	fmt.Fprintf(w, "Incorrect! (The answer is case sensitive)")
 }
 
 func main() {

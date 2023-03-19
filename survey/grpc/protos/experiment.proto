@@ -1,0 +1,36 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+option go_package = "./protos";
+
+// The service definition.
+service Checker {
+  rpc GetNumber (google.protobuf.Empty) returns (NumberReply) {}
+  rpc CheckNumber (CheckNumberRequest) returns (CheckNumberReply) {}
+  rpc CheckUser (google.protobuf.Empty) returns (CheckUserReply) {}
+}
+
+service Sender {
+  rpc RetrieveUser (google.protobuf.Empty) returns (User) {}
+}
+
+message NumberReply {
+  int32 number = 1;
+}
+
+message CheckNumberRequest {
+  int32 number = 1;
+}
+
+message CheckNumberReply {
+  string message = 1;
+}
+
+message CheckUserReply {
+  string message = 1;
+}
+
+message User {
+  string name = 1;
+  int32 id = 2;
+}

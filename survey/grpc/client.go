@@ -1,20 +1,16 @@
 package main
 
 import (
-	pb "Benchmarks/grpc/tutorial"
 	"context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
-)
-
-const (
-	address     = "localhost:5000"
-	defaultName = "Najem"
+	pb "survey/grpc/protos"
 )
 
 func main() {
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -26,14 +22,12 @@ func main() {
 		}
 	}(conn)
 
-	c := pb.NewGreeterClient(conn)
+	c := pb.NewCheckerClient(conn)
 
-	name := defaultName
-
-	r, err := c.SayHello(context.Background(), &pb.HelloRequest{Name: name})
+	r, err := c.CheckUser(context.Background(), &emptypb.Empty{})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
 
-	log.Printf("Greeting: %s", r.Message)
+	log.Printf("Number: %v", r.Message)
 }
