@@ -10,24 +10,31 @@ import (
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
+	conn, _ := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	defer func(conn *grpc.ClientConn) {
-		err := conn.Close()
-		if err != nil {
-			panic("closed")
-		}
+		conn.Close()
 	}(conn)
 
 	c := pb.NewCheckerClient(conn)
 
-	r, err := c.CheckUser(context.Background(), &emptypb.Empty{})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
+	num, _ := c.GetNumber(context.Background(), &emptypb.Empty{})
 
-	log.Printf("Number: %v", r.Message)
+	log.Printf("Number: %v", num.Number)
+
+	num.Number *= 2
+
+	r, _ := c.CheckNumber(context.Background(), &pb.CheckNumberRequest{Number: num.Number})
+
+	log.Println(r)
+
+	/*
+		Assuming the function returns an object
+		with the following fields:
+		Name string
+		Friends int32
+	*/
+
+	r.Message = "hey"
+
 }
