@@ -75,6 +75,7 @@ func checkUser(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	log.Println("HTTP server started on port 8080")
 	http.HandleFunc("/hello", hello)
 	http.HandleFunc("/getNumber", getNumber)
 	http.HandleFunc("/checkNumber", checkNumber)

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
 	"net"
@@ -15,11 +14,7 @@ type Server struct {
 }
 
 func (s *Server) RetrieveUser(_ context.Context, _ *emptypb.Empty) (*pb.User, error) {
-	return &pb.User{
-			Name: "Margaret Hamilton",
-			Id:   1969,
-		},
-		nil
+
 }
 
 func main() {
@@ -28,6 +23,5 @@ func main() {
 
 	s := grpc.NewServer()
 	pb.RegisterSenderServer(s, &Server{})
-	reflection.Register(s)
 	s.Serve(lis)
 }

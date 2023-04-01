@@ -66,8 +66,8 @@ func (s *CheckerServer) CheckUser(_ context.Context, _ *emptypb.Empty) (*pb.Chec
 }
 
 func main() {
-	log.Println("gRPC server started")
-	lis, err := net.Listen("tcp", ":50051")
+	log.Println("gRPC server started on port 7070")
+	lis, err := net.Listen("tcp", ":7070")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
