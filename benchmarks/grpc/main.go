@@ -22,7 +22,7 @@ func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 func main() {
 	println("gRPC server tutorial in Go")
 
-	listener, err := net.Listen("tcp", ":5000")
+	listener, err := net.Listen("tcp", ":9090")
 	if err != nil {
 		panic(err)
 	}

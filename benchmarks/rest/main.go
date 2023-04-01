@@ -9,11 +9,11 @@ import (
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hello234\n")
+	fmt.Fprintf(w, "hello\n")
 }
 
 func main() {
-	http.HandleFunc("/hello", hello)
+	http.HandleFunc("/test1", hello)
 
 	http.ListenAndServe(":8080", nil)
 }
