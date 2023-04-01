@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option go_package = "./tutorial";
+
+// The service definition.
+service Experiment {
+  // Sends a greeting
+  rpc Test1 (Empty) returns (Test1Res) {}
+  rpc Test2 (Empty) returns (Test23Res) {}
+  rpc Test3 (Empty) returns (Test23Res) {}
+}
+
+// Empty request.
+message Empty {
+}
+
+// Response for test1
+message Test1Res {
+  string message = 1;
+}
+
+// Response for test 2 and 3
+message Test23Res {
+  repeated Item items = 1;
+}
+
+// The test model that should be returned
+message Item {
+  string id = 1;
+  int32 index = 2;
+  string guid = 3;
+  bool isActive = 4;
+  float balance = 5;
+  string picture = 6;
+  int32 age = 7;
+  string eyeColor = 8;
+  string name = 9;
+  string gender = 10;
+  string company = 11;
+  string email = 12;
+  string phone = 13;
+}
