@@ -31,8 +31,8 @@ export default function () {
 
     client.invoke("Experiment/Test1", {});
     // console.log(JSON.stringify(response.message))
-    client.close()
-    sleep(0.5)
+    //client.close()
+    //sleep(0.5)
 
 
     // let rps = requests.length / 30;

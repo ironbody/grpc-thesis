@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Benchmarks/grpc/experiment"
+	//"Benchmarks/grpc/experiment"
 	pb "Benchmarks/grpc/experiment"
 	"context"
 	"google.golang.org/grpc"
@@ -36,32 +36,36 @@ var testItem pb.Item = pb.Item{
 	FavoriteFruit: "strawberry",
 }
 
-var test2Return []*pb.Item
-var test3Return []*pb.Item
+var test2Array []*pb.Item
+var test3Array []*pb.Item
+
+var test1Return pb.Test1Res = pb.Test1Res{Message:"Hello, World!"}
+var test2Return pb.Test23Res
+var test3Return pb.Test23Res
 
 func (s *Server) Test1(ctx context.Context, _ *pb.Empty) (*pb.Test1Res, error) {
-	return &pb.Test1Res{Message: "Hello, World!"}, nil
+	return &test1Return, nil
 }
 
 func (s *Server) Test2(ctx context.Context, _ *pb.Empty) (*pb.Test23Res, error) {
-	return &pb.Test23Res{Items: test2Return}, nil
+	return &test2Return, nil
 }
 
 func (s *Server) Test3(ctx context.Context, _ *pb.Empty) (*pb.Test23Res, error) {
-	return &pb.Test23Res{Items: test3Return}, nil
+	return &test3Return, nil
 }
 
 func main() {
 	println("gRPC server tutorial in Go")
 
-	test2Return = make([]*pb.Item, 150)
+	test2Array = make([]*pb.Item, 150)
 	for i := 0; i < 150; i++ {
-		test2Return[i] = &testItem
+		test2Array[i] = &testItem
 	}
 
-	test3Return = make([]*pb.Item, 4500)
+	test3Array = make([]*pb.Item, 4500)
 	for i := 0; i < 4500; i++ {
-		test3Return[i] = &testItem
+		test3Array[i] = &testItem
 	}
 
 	listener, err := net.Listen("tcp", ":9090")
@@ -69,8 +73,16 @@ func main() {
 		panic(err)
 	}
 
+	test2Return = pb.Test23Res {
+		Items: test2Array,
+	}
+
+	test2Return = pb.Test23Res {
+		Items: test3Array,
+	}
+
 	s := grpc.NewServer()
-	tutorial.RegisterExperimentServer(s, &Server{})
+	pb.RegisterExperimentServer(s, &Server{})
 	if err := s.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
