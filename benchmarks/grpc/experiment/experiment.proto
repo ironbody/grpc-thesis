@@ -6,8 +6,8 @@ option go_package = "./tutorial";
 service Experiment {
   // Sends a greeting
   rpc Test1 (Empty) returns (Test1Res) {}
-  rpc Test2 (Empty) returns (Test23Res) {}
-  rpc Test3 (Empty) returns (Test23Res) {}
+  rpc Test2 (Empty) returns (Test1Res) {}
+  rpc Test3 (Empty) returns (Test1Res) {}
 }
 
 // Empty request.
